@@ -7,25 +7,27 @@
 #include <QDebug>
 #include <QFile>
 #include <QTextStream>
-class LeafLogger : public QObject
+#include <QDir>
+#include <QTextCodec>
+#include <QSysInfo>
+class LeafLogger
 {
-    Q_OBJECT
 public:
-    explicit LeafLogger(QObject *parent = nullptr);
-
-    void LogMessage(const QString log, const char *func, const char *file, int line) const;
-    void LogMessage(const QString log, const char *func) const;
-    void LogMessage(const QString log) const;
-    void LogMessage(const wchar_t* log);
+    explicit LeafLogger();
+    static void LogMessage(const QString log, const char *func, const char *file, int line) ;
+    static void LogMessage(const QString log, const char *func) ;
+    static void LogMessage(const QString log) ;
+    static void LogMessage(const wchar_t* log);
     static void setFilePath(QString Path);
+    static void setFilePathWithTime();
     LeafLogger& operator<<(const QString log);
     LeafLogger& operator<<(const wchar_t* log);
-signals:
-
-public slots:
+    static LeafLogger getLogger();
+    static void LogSysInfo();
+    static void LogInit();
 private:
-    static QFile* file;
     static bool isFileSetPath;
+    static QString filePath;
 
 };
 #endif // LEAFLOGGER_H
