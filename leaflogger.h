@@ -7,16 +7,17 @@
 #include <QDebug>
 #include <QFile>
 #include <QTextStream>
+#include <QMutex>
+#include <QMutexLocker>
 #include <QDir>
 #include <QTextCodec>
 #include <QSysInfo>
 class LeafLogger
 {
 public:
-    explicit LeafLogger();
     static void LogMessage(const QString log, const char *func, const char *file, int line) ;
     static void LogMessage(const QString log, const char *func) ;
-    static void LogMessage(const QString log) ;
+    static void LogMessage(const QString log);
     static void LogMessage(const wchar_t* log);
     static void setFilePath(QString Path);
     static void setFilePathWithTime();
@@ -25,9 +26,12 @@ public:
     static LeafLogger getLogger();
     static void LogSysInfo();
     static void LogInit();
-private:
-    static bool isFileSetPath;
-    static QString filePath;
+signals:
 
+public slots:
+private:
+    static QFile file;
+    static bool isFileSetPath;
+    static QMutex mutex;
 };
 #endif // LEAFLOGGER_H

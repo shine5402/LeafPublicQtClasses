@@ -1,13 +1,7 @@
 ﻿#include "leaflogger.h"
-LeafLogger::LeafLogger()
-{
-
-}
-
 void LeafLogger::LogMessage(const QString log)
 {
-    QFile* file = new QFile(filePath);
-    file->open(QIODevice::ReadWrite | QIODevice::Text);
+    QMutexLocker locker(&mutex);
     QDateTime current_date_time =QDateTime::currentDateTime();
     if (!isFileSetPath) {
         QString log_text = QString(u8"[%1] %2\n").arg(current_date_time.toString("yyyy.MM.dd hh:mm:ss.zzz")).arg(QStringLiteral("警告：日志文件IO设备没有被指定路径，日志将不会被记录到文件中。"));
@@ -17,22 +11,22 @@ void LeafLogger::LogMessage(const QString log)
     QString log_text = QString(u8"[%1] %2\n").arg(current_date_time.toString("yyyy.MM.dd hh:mm:ss.zzz")).arg(log);
     qDebug() << log_text;
     if (isFileSetPath){
-        QTextStream writer(file);
+        QTextStream writer(&file);
         writer.setCodec(QTextCodec::codecForName("Utf8"));
         writer << log_text;
     }
-    file->close();
-    file->deleteLater();
 }
 
 void LeafLogger::LogMessage(const wchar_t *log)
 {
     LogMessage(QString::fromWCharArray(log));
 }
-
 void LeafLogger::setFilePath(QString Path)
 {
-    filePath = Path;
+    if (file.isOpen())
+        file.close();
+    file.setFileName(Path);
+    file.open(QIODevice::ReadWrite);
     //writer.setDevice(file);
     isFileSetPath = true;
 }
@@ -47,19 +41,6 @@ void LeafLogger::setFilePathWithTime()
     delete dir;
     setFilePath(QString("./log/log%1.txt").arg(current_date_time.toString("yyyyMMddhhmmsszzz")));
 }
-
-LeafLogger &LeafLogger::operator<<(const QString log)
-{
-    LogMessage(log);
-    return *this;
-}
-
-LeafLogger &LeafLogger::operator<<(const wchar_t *log)
-{
-    LogMessage(QString::fromWCharArray(log));
-    return *this;
-}
-
 LeafLogger LeafLogger::getLogger()
 {
     return LeafLogger();
@@ -81,6 +62,18 @@ void LeafLogger::LogInit()
     LogSysInfo();
 }
 
+LeafLogger &LeafLogger::operator<<(const QString log)
+{
+    LogMessage(log);
+    return *this;
+}
+
+LeafLogger &LeafLogger::operator<<(const wchar_t *log)
+{
+    LogMessage(QString::fromWCharArray(log));
+    return *this;
+}
+
 void LeafLogger::LogMessage(const QString log, const char* func)
 {
     QString log_with_func = QString(u8"函数：%1：%2").arg(func).arg(log);
@@ -92,7 +85,9 @@ void LeafLogger::LogMessage(const QString log, const char* func, const char* fil
     QString log_with_func_line = QString("（%4:%2）函数：%1：%3").arg(func).arg(line).arg(log).arg(file);
     LogMessage(log_with_func_line);
 }
+QFile LeafLogger::file;
 bool LeafLogger::isFileSetPath = false;
-QString LeafLogger::filePath{};
+//QTextStream LeafLogger::writer = QTextStream(file);
+QMutex LeafLogger::mutex;
 
 
