@@ -48,10 +48,10 @@ LeafLogger LeafLogger::getLogger()
 
 void LeafLogger::LogSysInfo()
 {
-    LeafLogger::LogMessage(QString(u8"启动唯一标识符（仅Linux与Apple）：%1").arg(QString(QSysInfo::bootUniqueId())));
+    //LeafLogger::LogMessage(QString(u8"启动唯一标识符（仅Linux与Apple）：%1").arg(QString(QSysInfo::bootUniqueId())));
     LeafLogger::LogMessage(QString(u8"当前程序ABI：%1").arg(QSysInfo::buildAbi()));
     LeafLogger::LogMessage(QString(u8"当前系统架构：%1").arg(QSysInfo::currentCpuArchitecture()));
-    LeafLogger::LogMessage(QString(u8"机器唯一标识符：%1").arg(QString(QSysInfo::machineUniqueId())));
+    //LeafLogger::LogMessage(QString(u8"机器唯一标识符：%1").arg(QString(QSysInfo::machineUniqueId())));
     LeafLogger::LogMessage(QString(u8"机器主机名：%1").arg(QSysInfo::machineHostName()));
     LeafLogger::LogMessage(QString(u8"操作系统：%1").arg(QSysInfo::prettyProductName()));
 }
