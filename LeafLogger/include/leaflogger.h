@@ -1,8 +1,9 @@
 ﻿#ifndef LEAFLOGGER_H
 #define LEAFLOGGER_H
 
+#include "leaflogger_global.h"
+
 #include <QObject>
-#include <QWidget>
 #include <QDateTime>
 #include <QDebug>
 #include <QFile>
@@ -12,7 +13,7 @@
 #include <QDir>
 #include <QTextCodec>
 #include <QSysInfo>
-class LeafLogger
+class LEAFLOGGERSHARED_EXPORT LeafLogger
 {
 public:
     static void LogMessage(const QString log, const char *func, const char *file, int line) ;
@@ -34,4 +35,6 @@ private:
     static bool isFileSetPath;
     static QMutex mutex;
 };
+
+
 #endif // LEAFLOGGER_H

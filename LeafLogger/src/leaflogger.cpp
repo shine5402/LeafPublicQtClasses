@@ -1,4 +1,4 @@
-﻿#include "leaflogger.h"
+﻿#include "../include/leaflogger.h"
 void LeafLogger::LogMessage(const QString log)
 {
     QMutexLocker locker(&mutex);
